@@ -220,6 +220,8 @@ tqdm
           p.start()
       for p in ps:
           p.join()
+          
+![image](https://user-images.githubusercontent.com/64252911/191296764-680d4858-7227-4900-a18c-6a3d6ea7ed26.png)
 
 
 ## 6. 실험결과
@@ -248,7 +250,7 @@ git 업로드 문제 상 실험에 사용한 데이터셋은 제외 후 push 하
 
 AI의 기본적인 platform구축을 실습을 함으로써 많은 도움이 되었으며,
 연합학습(Federated Learning)을 FEMNIST 데이터셋을 통해 실습함으로 기초 지식 및 running 구조를 보다 쉽게 이해 할 수 있었음.
-추후 강의를 통해 더욱 고도화된 연합학습 실습을 학습하고 싶음.
+추후 강의를 통해 더욱 고도화된 연합학습을 실습을 통해 하고 싶음.
 
 
 
