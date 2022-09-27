@@ -4,6 +4,18 @@
 ### IT융합공학과 컴퓨터공학전공 202245234 홍인표
 
 
+## 기존 Machine Learning 시스템의 한계
+각 User들이 Data를 중앙집중화된 서버에 Merge하고, Server는 Model을 학습시킨 후 User들에게 추론결과를 전달하는 방식이다.
+하지만 User들이 Sensitive data(ex.medical data, financial data)를 Server에 전달할 경우 privacy 및 법적 문제가 생길 수 있다.
+또한, 다수의 User들이 Server를 동시에 점유하는 경우 실시간 시스템의 동작에 한계가 생긴다.
+
+## Federated Learning(연합학습)이란
+
+각 환경에 맞는 Model을 다른 User들과의 연합시스템을 구성하여 학습하는 방식으로, 기존 Machine Learning의 한계를 개선하기 위해 나온 방법이다.
+연합학습의 가장 큰 장점은 각 User가 자신의 Device에 있는 데이터를 유출시키지 않으면서, 서버에 존재하는 하나의 Model을 함께 학습시킬 수 있다는 것이다.
+동작방식은 여러 User가 각자의 데이터로 학습을 시킨 Model을 Server에 올려보냄으로써 서버에 모인 여러 Model값을 기반으로 Cloud에서 Globalization과정을 거친다.
+
+
 
 ## 1. Pytorch 설치 및 가상환경 설치
 
@@ -251,6 +263,48 @@ git 업로드 문제 상 실험에 사용한 데이터셋은 제외 후 push 하
 AI의 기본적인 platform구축을 실습함으로써 많은 도움이 되었으며,
 연합학습(Federated Learning)을 FEMNIST 데이터셋을 통해 실습함으로 기초 지식 및 running 구조를 보다 쉽게 이해 할 수 있었음.
 추후 강의를 통해 더욱 고도화된 연합학습을 실습을 통해 하고 싶음.
+
+
+
+##추가실험
+
+Cifar-10데이터셋을 사용한 코드에서 제시한 기본모델구조 사용에서 더 나아가 비교적 최신에 발표된 EfficientNet을 학습에 사용해보았음.
+EfficientNet은 20119년에 발표된 논문으로 현재까지 Convolution 기반의 이미지분류 모델 중 가장 우수한 성능을 보임.
+EfficientNet은
+
+1.Network의 Depth
+2.Channel width
+3.Input Image의 해상도
+
+중 최적을 조합을 찾은 모델 구조이며, 기존 ConvNet 대비 8.4배 감소한 크기에 더불어 6.1배 높은 정확도를 가짐.
+따라서 기존 ConvNet구조를 사용하지 않고 Efficient Net을 사용함.
+
+
+    from efficientnet_pytorch import EfficientNet
+    
+본 실험에서는 Pretrained 된 EfficientNet을 사용하기 위해 위와 같은 import 명령어를 사용하였음.
+
+main 함수는 다음과 같이 수정함
+
+    def main():
+    DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print("Centralized PyTorch training")
+    print("Load data")
+    trainloader, testloader, _ = load_data()
+    print("Start training")
+    model = EfficientNet.from_pretrained('efficientnet-b0', num_classes=10)
+    net = model.to(DEVICE)
+    train(net=net, trainloader=trainloader, epochs=2, device=DEVICE)
+    print("Evaluate model")
+    loss, accuracy = test(net=net, testloader=testloader, device=DEVICE)
+    print("Loss: ", loss)
+    print("Accuracy: ", accuracy)
+
+client의 epoch는 2, Server의 round는 3으로 설정후 실험한 결과는 다음과 같음.
+
+![image](https://user-images.githubusercontent.com/64252911/192434644-e2392d8e-999f-4eed-8446-bc3db74ae020.png)
+
+Pretrained model을 사용하였기 때문에 실험결과가 기존모델에서 0.02%에서 0.68%까지 상당한 발전을 보임.
 
 
 
